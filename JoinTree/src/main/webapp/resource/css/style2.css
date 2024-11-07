@@ -1,0 +1,533 @@
+@charset "UTF-8";
+
+@font-face {
+	font-family: 'Pretendard-Regular';
+	src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+	font-weight: 400;
+	font-style: normal;
+}
+* {
+	font-family: 'Pretendard-Regular';
+}
+.btn{
+	font-family: 'Pretendard-Regular';
+}
+html, body, .table, .fontGray, .h1, .h2, h3, h4, h5, h6, input {
+	color: #464846;
+	font-family: 'Pretendard-Regular' !important;
+}
+.line {
+	border-bottom: 1px solid #999;
+}
+.center{
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+}
+.right{
+	text-align: right;
+	justify-content: right;
+	align-items: right;
+}
+.wrapper {
+	display: flex;
+	flex-wrap: wrap;
+}
+.margin10 {
+	margin: 10px;
+}
+.margin-left10 {
+	margin-left: 10px;
+}
+.margin-top10 {
+	margin-top: 10px;
+}
+.margin-top20 {
+	margin-top: 20px;
+}
+.margin-top40 {
+	margin-top: 40px;
+}
+.margin-top190 {
+	margin-top: 190px;
+}
+.margin-left30 {
+	margin-left: 30px;
+}
+.floatR{
+	float: right;
+}
+.floatL{
+	float: left;
+}
+.hidden {
+	display: none;
+}
+.height180 {
+	height: 180px;
+}
+
+/* 사이드 바*/
+.sidebar.sidebar-offcanvas {
+	min-height: calc(100% - 70px);
+}
+.sidebar .nav .nav-item.active > .nav-link i {
+	color:#25A8E0 !important;
+}
+.sidebar .nav .nav-item.active > .nav-link .menu-title {
+	color:#25A8E0 !important;
+}
+.sidebar .nav.sub-menu .nav-item .nav-link.active {
+	color:#25A8E0 !important;
+}
+/* 스위치 스타일 */
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 40px;
+	height: 20px;
+}
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+.slider:before {
+	position: absolute;
+	content: "";
+	height: 16px;
+	width: 16px;
+	left: 2px;
+	bottom: 2px;
+	background-color: white;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+input:checked + .slider {
+	background-color: #2196F3;
+}
+input:focus + .slider {
+	box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .slider:before {
+	-webkit-transform: translateX(20px);
+	-ms-transform: translateX(20px);
+	transform: translateX(20px);
+}
+
+/* 원형 스위치 */
+.slider.round {
+	border-radius: 34px;
+}
+.slider.round:before {
+	border-radius: 50%;
+}
+
+/* 공통코드 테이블*/
+.code {
+	overflow-y: hidden;
+	margin-bottom: 20px; /* 아래 여백 추가 */
+	position: relative; /* Relative 포지션 추가 */
+}
+.codelist {
+	height: 400px; 
+	overflow-y: auto;
+	box-shadow: 2px 2px 4px rgba(153, 153, 153, 0.5);
+	margin: 3px 3px 3px 0;
+}
+.code table {
+	border-collapse: collapse;
+}
+.code thead {
+	background-color: #ccc;
+	position: sticky;
+	top: 0;
+	z-index: 2; /* 더 높은 z-index 값을 사용하여 스티키 헤더를 위로 유지 */
+}
+.code .table th {
+	background-color: #ccc;
+	width: 100px;
+}
+.code-one table{
+	box-shadow: 2px 2px 4px rgba(153, 153, 153, 0.3);
+	margin: 3px 3px 3px 0;
+}
+.upCodeLink:hover {
+	background-color: #efefef;
+}
+.codeOneLink:hover {
+	background-color: #efefef;
+}
+.code input {
+	border: none;
+	box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+	height: 20px;
+}
+.add-code {
+	margin-top: 20px;
+	border: 1px solid #999;
+	width: 1000px;
+}
+.add-code button {
+	text-align: right;
+}
+.uppercase-text {
+	text-transform: uppercase;
+}
+
+/*홈*/
+.home-profile img{
+	width: 100px;
+	height: 100px;
+	border-radius: 100%;
+}
+.todoBtn{
+	width: 25px;
+	height: 25px;
+	padding: 0px;
+	margin-top: 3px;
+}
+.home a{
+	color: #464846;
+}
+.home .card {
+	height: 470px;
+}
+.schedule-item:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+/*기안서*/
+.doc .row {
+	height: 100%;
+	margin-bottom: 0;
+}
+.doc h1{
+	font-size: 45px;
+	font-weight: bold;
+}
+.doc table{
+	width: 100%;
+	text-align: center;
+}
+.doc input[type="text"] {
+	text-align: center;
+	border: none;
+	width: 100%;
+}
+.doc > table{
+	margin-bottom: 20px;
+	width: 100%;
+}
+.doc .doc-title tr > td:first-child {
+	border: none;
+	padding: 0;
+}
+.doc .table td{
+	border: 1px solid #999;
+	padding: 10px;
+}
+.doc .table .table tr td{
+	width: 400px;
+	border: 1px solid #999;
+	padding: 10px;
+}
+.doc .table .table tr > td:first-child{
+	width: 200px;
+	background-color: rgb(213, 213, 213);
+	font-weight: bold;
+}
+.doc .table .blank{
+	border: none;
+	padding: 0px 80px 0px 80px;
+}
+.doc .table .sign{
+	padding: 10px;
+}
+.doc .table .line{
+	border-bottom: 1px solid #000;
+	width: 100%;
+	padding: 0;
+}
+.doc .doc-comment tr td:first-child{
+	border: 1px solid #999;
+	background-color: rgb(213, 213, 213);
+	font-weight: bold;
+}
+.doc .doc-comment tr td{
+	border: 1px solid #999;
+}
+.doc .doc-comment textarea {
+	border : none;
+	width: 100%;
+	height: 300px;
+}
+.doc-line .btn{
+	width: 25px;
+	height: 25px;
+	padding: 0px;
+	margin-top: 3px;
+}
+.doc-line .wrapper h3{
+	margin: 0;
+}
+.doc-line .wrapper button{
+	margin: 0px 0px 0px 5px;
+}
+.doc-line .line {
+	border-bottom: 1px solid #efefef;
+}
+.doc_selete {
+	border: 1px solid #999; 
+	box-shadow: 0px 0px 5px rgba(153, 153, 153, 0.5);
+	width: 100%; 
+	height: 130px;
+	font-size: 15px;
+	padding: 15px;
+}
+.menu-title {
+	position: relative;
+}
+.doc-cnt {
+	border: 1px solid #F70817;
+	border-radius: 100%;
+	background-color: #F70817;
+	width: 8px;
+	height: 8px;
+	top: -4px;
+	right: -10px;
+	position: absolute;
+}
+.doc select.form-control{
+	color: #464846 !important;
+}
+/*프로젝트*/
+.project .projectData .card{
+	width: 300px;
+	height: 300px;
+	margin: 30px 0px 0px 0px;
+}
+.project h1 {
+	font-weight: 900;
+	font-size: 40px;
+}
+.projectData {
+	height: 750px;
+	overflow-y: auto;
+}
+.projectData .card {
+	position: relative;
+}
+.projectData .membercnt {
+	position: absolute;
+	bottom: 10px;
+	left: calc(50% - 40px);
+}
+.project-modal .wrapper {
+	align-items: center;
+}
+.color {
+	display: flex;
+	width: 20px; 
+	height:20px; 
+	border:1px solid #999; 
+	background-color: #8AE6C5;
+	margin: 0px 10px 0px 1px;
+}
+.projectOne h1 input {
+	margin:0px;
+	font-weight: 900;
+	font-size: 40px;
+}
+.projectOne h3{
+	font-weight: 700;
+	font-size: 20px;
+	margin-right: 40px;
+}
+.projectOne .wrapper p {
+	font-weight: 500;
+	font-size: 18px;
+	margin-top: -1px;
+}
+.projectOne .wrapper p input {
+	font-weight: 500;
+	font-size: 18px;
+	margin-top: -5px;
+}
+.projectOne .wrapper div{
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+}
+.projectOne .memberList {
+	width: 700px;
+}
+.projectOne .memberName p {
+	background-color: #888; 
+	border-radius: 5px; 
+	padding:5px 6px 2px 4px; 
+	margin: 2px 4px 10px 4px;
+	color: white;
+	font-size: 12px;
+	position: relative;
+}
+.projectOne .memberName p .deleteMember{
+	color: white;
+	float: right;
+	position: absolute;
+	top: -3px;
+	right: 2px;
+}
+.projectOne .progressNo p{
+	margin: -8px 0px 0px 10px;
+	font-size: 15px;
+	font-weight: 700;
+	color: #2196F3;
+}
+.deleteMember:hover{
+	 cursor: pointer;
+}
+.projectOne .btn {
+	margin-left: 10px;
+	color: white;
+}
+.projectOne .btn i {
+	color: white;
+	font-size: 10px;
+}
+.projectOne input {
+	border: none;
+	background-color: transparent;
+	border-radius: 3px;
+}
+.projectOne h3 input{
+	width: 50%;
+}
+.progress {
+	width: 70%;
+	height: 20px;
+	background-color: #DBDBDB;
+	border-radius: 5px;
+	margin-top:2px;
+}
+.progress-bar {
+	height: 100%;
+	background-color: #25A8E0;
+	border-radius: 5px;
+	width: 0;
+	transition: width 0.3s ease;
+}
+.project-task-comment {
+	float:right;
+}
+.projectTaskList1, .projectTaskList2 {
+	height: 150px;
+	overflow-y: auto;
+}
+.projectTaskList1 .projectTaskOne, .projectTaskList2 .projectTaskOne  {
+	height: 35px;
+	border: 1px solid #999;
+	padding: 8px;
+	border-radius: 10px;
+}
+.projectTaskList1 .projectTaskOne:hover, .projectTaskList2 .projectTaskOne:hover {
+	background-color: #efefef;
+}
+.projectTaskListAll{
+	float:left;
+	padding-left: 0px;
+}
+.projectTaskListAll .card-body {
+	padding : 0px;
+}
+.projectTaskListAll .card-body h4{
+	padding: 20px;
+	color: #2196F3;
+	font-weight: bold;
+}
+.projectTaskListAll .card-body h4:first-child {
+	color: crimson;
+}
+
+/* 프로젝트 작업 */
+.projectTask .card{
+	margin-bottom:10px;
+}
+.projectTask .add-comment .card-body{
+	padding:20px;
+}
+.projectTaskList1 .wrapper {
+	align-items: center;
+}
+.project-task-comment {
+	padding-right: 0px;
+}
+
+/* 프로젝트 댓글 */
+.taskComment {
+	height : 300px;
+	overflow-y: auto;
+}
+.taskComment .card-body{
+	padding:20px;
+}
+.taskComment .card{
+	min-width: 140px;
+	margin: 0 0 10px 30px;
+}
+.add-comment textarea, .childComment textarea {
+	border: none;
+	box-shadow: 0px 0px 5px rgba(153, 153, 153, 0.5);
+	width: 100%;
+	margin: 10px 0 10px 0;
+	font-size: 15px;
+}
+.add-comment .wrapper, .childComment .wrapper{
+	flex-wrap: unset;
+}
+.add-comment .wrapper button, .childComment .wrapper button{
+	width: 76px;
+	height: 61px;
+	margin-top: 9px;
+}
+/* 대댓글 */
+.taskComment .childComment {
+	min-width: 140px;
+	margin: 0 0 10px 60px;
+}
+
+.taskFile input {
+	height: 50px;
+}
+
+/* 모달 */
+.modal-content  {
+	background-color: #efefef !important;
+}
+.modal .modal-title {
+	width: 100%;
+}
+.modal .btn-close {
+	width: 10px;
+	text-align: right;
+	padding: 17px -26px 13px 10px;
+	margin: -25px -26px -25px auto;
+	border: none;
+	font-size: 23px;
+}
+
+/* 검색 간격 */
+.adminsearch{
+	width: 80px;
+}

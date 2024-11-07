@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goodee.JoinTree.mapper.DocumentMapper">
+	<!-- 입력 -->
+	<!-- 기본 기안서, 퇴직 기안서 입력 -->
+ 	<insert id="addDocDefault" parameterType="com.goodee.JoinTree.vo.DocumentDefault">
+ 		<selectKey order="AFTER" keyProperty="docNo" resultType="int">
+	        SELECT last_insert_id()
+	    </selectKey>
+		INSERT INTO document_default(
+			emp_no,
+			doc_title,
+			doc_content,
+			category,
+			writer,
+			reference,
+			receiver_team,
+			doc_status,
+			doc_stamp1,
+			doc_stamp2,
+			doc_stamp3,
+			createdate,
+			updatedate,
+			create_id,
+			update_id
+		)
+		VALUES(
+			#{empNo},
+			#{docTitle},
+			#{docContent},
+			#{category},
+			#{writer},
+			#{reference},
+			#{receiverTeam},
+			'A0201',
+			#{docStamp1},
+			#{docStamp2},
+			#{docStamp3},
+			now(),
+			now(),
+			#{empNo},
+			#{empNo}
+		)
+	</insert>
+	
+	<!-- 휴가 기안서 입력 -->
+ 	<insert id="addDocLeave" parameterType="com.goodee.JoinTree.vo.DocumentLeave">
+		INSERT INTO document_leave(
+			doc_no,
+			leave_category,
+			doc_leave_start_date,
+			doc_leave_end_date,
+			doc_leave_period_date,
+			doc_leave_tel,
+			createdate,
+			updatedate,
+			create_id,
+			update_id
+		)
+		VALUES(
+			#{docNo},
+			#{leaveCategory},
+			#{docLeaveStartDate},
+			#{docLeaveEndDate},
+			#{docLeavePeriodDate},
+			#{docLeaveTel},
+			now(),
+			now(),
+			#{createId},
+			#{updateId}
+		)
+	</insert>
+	
+	<!-- 인사이동 기안서 입력 -->
+ 	<insert id="addDocReshuffle" parameterType="com.goodee.JoinTree.vo.DocumentReshuffle">
+		INSERT INTO document_reshuffle(
+			doc_no,
+			doc_reshuffle_date,
+			doc_reshuffle_task,
+			doc_reshuffle_result,
+			doc_reshuffle_dept,
+			doc_reshuffle_position,
+			createdate,
+			updatedate,
+			create_id,
+			update_id
+		)
+		VALUES(
+			#{docNo},
+			#{docReshuffleDate},
+			#{docReshuffleTask},
+			#{docReshuffleResult},
+			#{docReshuffleDept},
+			#{docReshufflePosition},
+			now(),
+			now(),
+			#{createId},
+			#{updateId}
+		)
+	</insert>
+	
+	<!-- 수정 -->
+	<!-- 기본 기안서 수정 -->
+ 	<update id="modifyDocDefault" parameterType="com.goodee.JoinTree.vo.DocumentDefault">
+		UPDATE document_default
+		SET
+			doc_title = #{docTitle},
+			doc_content = #{docContent},
+			reference = #{reference},
+			receiver_team = #{receiverTeam},
+			updatedate = now(),
+			update_id = #{empNo} <!-- 이것도 업데이트 해야할까요..? -->
+		WHERE doc_no = #{docNo} AND emp_no = #{empNo}
+	</update>
+	
+	<!-- 휴가 기안서 수정 -->
+ 	<update id="modifyDocLeave" parameterType="com.goodee.JoinTree.vo.DocumentLeave">
+		UPATE document_leave
+		SET
+			leave = #{leave},
+			doc_leave_start_date = #{docLeaveStartDate},
+			doc_leave_end_date =#{docLeaveEndDate},
+			doc_leave_period_date = #{docLeavePeriodDate},
+			doc_leave_reason =#{docLeaveReason},
+			doc_leave_tel =#{docLeaveTel},
+			updatedate = now(),
+			update_id = #{empNo}
+		WHERE doc_no = #{docNo} AND emp_no = #{empNo}
+	</update>
+	
+	<!-- 인사이동 기안서 수정 -->
+ 	<update id="modifyDocReshuffle" parameterType="com.goodee.JoinTree.vo.DocumentReshuffle">
+		UPDATE document_reshuffle
+		SET
+			doc_reshuffle_date = #{docReshuffleDate},
+			doc_reshuffle_task = #{docReshuffleTask},
+			doc_reshuffle_result = #{docReshuffleResult},
+			doc_reshuffle_dept = #{docReshuffleDept},
+			doc_reshuffle_position = #{docReshufflePosition},
+			doc_reshuffle_reason = #{docReshuffleReason},
+			updatedate = now(),
+			update_id = #{empNo}
+		WHERE doc_no = #{docNo} AND emp_no = #{empNo}
+	</update>
+	
+	<!-- 첫 번째 결재자 결재 -->
+	<update id="approveDocDefault1" parameterType="com.goodee.JoinTree.vo.DocumentDefault">
+		UPDATE document_default
+		SET doc_status = #{docStatus}, 
+			doc_stamp2 = #{docStamp2}, 
+			updatedate = NOW(), 
+			update_id = #{updateId}
+		WHERE doc_no = #{docNo}
+	</update>
+	
+	<!-- 두 번째 결재자 결재 -->
+	<update id="approveDocDefault2" parameterType="com.goodee.JoinTree.vo.DocumentDefault">
+		UPDATE document_default
+		SET doc_status = #{docStatus}, 
+			doc_stamp3 = #{docStamp3}, 
+			updatedate = NOW(), 
+			update_id = #{updateId}
+		WHERE doc_no = #{docNo}
+	</update>
+	
+	<!-- 반려 -->
+	<update id="rejectDocDefault" parameterType="com.goodee.JoinTree.vo.DocumentDefault">
+		UPDATE document_default
+		SET doc_status = #{docStatus}, 
+			updatedate = NOW(), 
+			update_id = #{updateId}
+		WHERE doc_no = #{docNo}
+	</update>
+	
+	<!-- 삭제 -->
+	<!-- 기본 기안서 삭제 -->
+ 	<delete id="removeDocDefault" parameterType="com.goodee.JoinTree.vo.DocumentDefault">
+		DELETE
+		FROM document_default
+		WHERE doc_no = #{docNo}
+	</delete>
+	
+	<!-- 휴가 기안서 삭제 -->
+ 	<delete id="removeDocLeave" parameterType="com.goodee.JoinTree.vo.DocumentLeave">
+		DELETE
+		FROM document_leave
+		WHERE doc_no = #{docNo}
+	</delete>
+	
+	<!-- 인사이동 기안서 삭제 -->
+ 	<delete id="removeDocReshuffle" parameterType="com.goodee.JoinTree.vo.DocumentReshuffle">
+		DELETE
+		FROM document_reshuffle
+		WHERE doc_no = #{docNo}
+	</delete>
+	
+	<!-- 조회 -->
+	<!-- 기본 기안서 조회 -->
+	<select id="selectDocDefaultOne"
+		parameterType="com.goodee.JoinTree.vo.DocumentDefault"
+		resultType="com.goodee.JoinTree.vo.DocumentDefault">
+		SELECT 
+			doc_no docNo,
+			emp_no empNo,
+			category,
+			doc_title docTitle,
+			doc_content docContent,
+			writer,
+			reference,
+			receiver_team receiverTeam,
+			doc_status docStatus,
+			createdate,
+			updatedate,
+			create_id createId,
+			update_id updateId
+		FROM
+			document_default
+		WHERE doc_no = #{docNo}
+	</select>
+	
+	<!-- 휴가 기안서 조회 -->
+	<select id="selectDocLeaveOne"
+		parameterType="com.goodee.JoinTree.vo.DocumentLeave"
+		resultType="com.goodee.JoinTree.vo.DocumentLeave">
+		SELECT 
+			doc_no docNo,
+			leave,
+			doc_leave_start_date docLeaveStartDate,
+			doc_leave_end_date docLeaveEndDate,
+			doc_leave_period_date docLeavePeriodDate,
+			doc_leave_reason docLeaveReason,
+			doc_leave_tel docLeaveTel,
+			createdate,
+			updatedate,
+			create_id createId,
+			update_id updateId
+		FROM
+			document_leave
+		WHERE doc_no = #{docNo}
+	</select>
+	
+	<!-- 인사이동 기안서 조회 -->
+	<select id="selectDocReshuffleOne"
+		parameterType="com.goodee.JoinTree.vo.DocumentReshuffle"
+		resultType="com.goodee.JoinTree.vo.DocumentReshuffle">
+		SELECT 
+			doc_no docNo,
+			doc_reshuffle_date docReshuffleDate,
+			doc_reshuffle_task docReshuffleTask,
+			doc_reshuffle_result docReshuffleResult,
+			doc_reshuffle_dept docReshuffleDept,
+			doc_reshuffle_position docReshufflePosition,
+			doc_reshuffle_reason docReshuffleReason,
+			createdate,
+			updatedate,
+			create_id createId,
+			update_id updateId
+		FROM
+			document_reshuffle
+		WHERE doc_no = #{docNo}
+	</select>
+	
+	
+	<!-- 문서결제양식 코드 조회 -->
+	<select id="selectDocumentCodeList" resultType="com.goodee.JoinTree.vo.CommonCode">
+		SELECT 
+			code,
+			code_name codeName
+		FROM common_code 
+		WHERE up_code = 'D01'
+	</select>
+	
+	<!-- 기본기안서 상세 조회 -->
+	<select id="getDocumentDefaultOne" 
+			parameterType="int" resultType="java.util.Map">
+		SELECT 
+			d.doc_no docNo, -- 문서번호
+			d.category, -- 문서 카테고리
+			d.doc_status docStatus, -- 문서 상태
+			d.emp_no empNo, -- 기안자 사번
+			d.createdate, -- 기안일
+			d.writer, -- 기안자
+			d.doc_stamp1 docStamp1, -- 기안자 서명
+			d.doc_stamp2 docStamp2, -- 결재자 1 서명
+			d.doc_stamp3 docStamp3, -- 결재자 2 서명
+			reference_info.emp_name reference, -- 참조자
+			rec.code_name receiverTeam, -- 수신팀
+			d.doc_title docTitle, -- 문서 제목
+			d.doc_content docContent, -- 문서 내용
+			dc.code_name dept, -- 기안 부서
+			pc.code_name position, -- 기안자 직급
+			f.doc_save_filename docSaveFileName, -- 첨부파일 저장명
+			f.doc_origin_filename docOriginFileName, -- 첨부파일 원본명
+			signer1_info.emp_name signer1Name, -- 결재자 1 사원명
+			signer1_info.emp_no signer1No, -- 결재자 1 사번
+			signer1_pc.code_name signer1Position, -- 결재자 1 직급
+			signer2_info.emp_name signer2Name, -- 결재자 2 사원명
+			signer2_info.emp_no signer2No, -- 결재자 2 사번
+			signer2_pc.code_name signer2Position -- 결재자 2 직급
+		FROM document_default d -- 기본 기안서
+		LEFT OUTER JOIN emp_info e ON d.emp_no = e.emp_no -- 사원 정보
+		LEFT OUTER JOIN document_file f ON d.doc_no = f.doc_no -- 첨부파일 
+		LEFT OUTER JOIN document_signer ds1 ON d.doc_no = ds1.doc_no AND ds1.emp_signer_level = 1 -- 기안문서의 결재자 1
+		LEFT OUTER JOIN emp_info signer1_info ON ds1.emp_signer_no = signer1_info.emp_no -- 결재자 1의 사원정보 
+		LEFT OUTER JOIN document_signer ds2 ON d.doc_no = ds2.doc_no AND ds2.emp_signer_level = 2 -- 기안문서의 결재자 2
+		LEFT OUTER JOIN emp_info signer2_info ON ds2.emp_signer_no = signer2_info.emp_no -- 결재자 2의 사원정보
+		LEFT OUTER JOIN emp_info reference_info ON d.reference = reference_info.emp_no -- 참조자 사원정보 
+		LEFT OUTER JOIN common_code dc ON e.dept = dc.code -- 기안부서 code_name
+		LEFT OUTER JOIN common_code pc ON e.position = pc.code -- 기안자 직급 code_name
+		LEFT OUTER JOIN common_code rec ON d.receiver_team = rec.code -- 수신팀 code_name
+		LEFT OUTER JOIN common_code signer1_pc ON signer1_info.position = signer1_pc.code -- 결재자1 code_name
+		LEFT OUTER JOIN common_code signer2_pc ON signer2_info.position = signer2_pc.code -- 결재자2 code_name
+		WHERE d.doc_no = #{docNo}
+	</select>
+	
+	<!-- 휴가신청서 상세 조회 -->
+	<select id="getDocumentLeaveOne"
+			parameterType="int" resultType="java.util.Map">
+		SELECT 
+			d.doc_no docNo, -- 문서번호
+			d.createdate, -- 기안일
+			d.writer, -- 기안자
+			d.doc_stamp1 docStamp1, -- 기안자 서명
+			d.doc_stamp2 docStamp2, -- 결재자 1 서명
+			d.doc_stamp3 docStamp3, -- 결재자 2 서명
+			reference_info.emp_name reference, -- 참조자
+			rec.code_name receiverTeam, -- 수신팀
+			d.doc_title docTitle, -- 문서 제목
+			d.doc_content docContent, -- 문서 내용
+			dc.code_name dept, -- 기안 부서
+			pc.code_name position, -- 기안자 직급
+			f.doc_save_filename docSaveFileName, -- 첨부파일 저장명
+			f.doc_origin_filename docOriginFileName, -- 첨부파일 원본명
+			signer1_info.emp_name signer1Name, -- 결재자 1 사원명
+			signer1_info.emp_no signer1No, -- 결재자 1 사번
+			signer1_pc.code_name signer1Position, -- 결재자 1 직급
+			signer2_info.emp_name signer2Name, -- 결재자 2 사원명
+			signer2_info.emp_no signer2No, -- 결재자 2 사번
+			signer2_pc.code_name signer2Position, -- 결재자 2 직급
+			leave_type.code_name leaveType, -- 연차구분
+			leave_type.code leaveCategory, -- 연가 코드
+			dl.doc_leave_start_date docLeaveStartDate, -- 연차 시작일
+			dl.doc_leave_end_date docLeaveEndDate, -- 연차 종료일
+			dl.doc_leave_period_date docLeavePeriodDate, -- 연차 일수
+			dl.doc_leave_tel docLeaveTel -- 비상연락처
+		FROM document_default d -- 기본 기안서
+		INNER JOIN document_leave dl ON d.doc_no = dl.doc_no -- 휴가신청서
+		LEFT OUTER JOIN emp_info e ON d.emp_no = e.emp_no -- 사원 정보
+		LEFT OUTER JOIN document_file f ON d.doc_no = f.doc_no -- 첨부파일 
+		LEFT OUTER JOIN document_signer ds1 ON d.doc_no = ds1.doc_no AND ds1.emp_signer_level = 1 -- 기안문서의 결재자 1
+		LEFT OUTER JOIN emp_info signer1_info ON ds1.emp_signer_no = signer1_info.emp_no -- 결재자 1의 사원정보 
+		LEFT OUTER JOIN document_signer ds2 ON d.doc_no = ds2.doc_no AND ds2.emp_signer_level = 2 -- 기안문서의 결재자 2
+		LEFT OUTER JOIN emp_info signer2_info ON ds2.emp_signer_no = signer2_info.emp_no -- 결재자 2의 사원정보
+		LEFT OUTER JOIN emp_info reference_info ON d.reference = reference_info.emp_no -- 참조자 사원정보 
+		LEFT OUTER JOIN common_code dc ON e.dept = dc.code -- 기안부서 code_name
+		LEFT OUTER JOIN common_code pc ON e.position = pc.code -- 기안자 직급 code_name
+		LEFT OUTER JOIN common_code rec ON d.receiver_team = rec.code -- 수신팀 code_name
+		LEFT OUTER JOIN common_code signer1_pc ON signer1_info.position = signer1_pc.code -- 결재자1 code_name
+		LEFT OUTER JOIN common_code signer2_pc ON signer2_info.position = signer2_pc.code -- 결재자2 code_name
+		LEFT OUTER JOIN common_code leave_type ON dl.leave_category = leave_type.code -- 연차구분 code_name
+		WHERE d.doc_no = #{docNo}
+	</select>
+	
+	<!-- 인사이동신청서 상세 조회 -->
+	<select id="getDocumentReshuffleOne"
+			parameterType="int" resultType="java.util.Map">
+		SELECT 
+			d.doc_no docNo, -- 문서번호
+			d.createdate, -- 기안일
+			d.writer, -- 기안자
+			d.doc_stamp1 docStamp1, -- 기안자 서명
+			d.doc_stamp2 docStamp2, -- 결재자 1 서명
+			d.doc_stamp3 docStamp3, -- 결재자 2 서명
+			reference_info.emp_name reference, -- 참조자
+			rec.code_name receiverTeam, -- 수신팀
+			d.doc_title docTitle, -- 문서 제목
+			d.doc_content docContent, -- 문서 내용
+			dc.code_name dept, -- 기안 부서
+			pc.code_name position, -- 기안자 직급
+			f.doc_save_filename docSaveFileName, -- 첨부파일 저장며
+			f.doc_origin_filename docOriginFileName, -- 첨부파일 원본명
+			signer1_info.emp_name signer1Name, -- 결재자 1 사원명
+			signer1_info.emp_no signer1No, -- 결재자 1 사번
+			signer1_pc.code_name signer1Position, -- 결재자 1 직급
+			signer2_info.emp_name signer2Name, -- 결재자 2 사원명
+			signer2_info.emp_no signer2No, -- 결재자 2 사번
+			signer2_pc.code_name signer2Position, -- 결재자 2 직급
+			dr.doc_reshuffle_date docReshuffleDate, -- 인사이동 일자
+			repo.code_name docReshufflePosition, -- 변경 후 직급
+			rede.code_name docReshuffleDept, -- 변경 후 부서
+			dr.doc_reshuffle_task docReshuffleTask, -- 주요 업무
+			dr.doc_reshuffle_result docReshuffleResult -- 업무성과
+		FROM document_default d -- 기본 기안서
+		INNER JOIN document_reshuffle dr ON d.doc_no = dr.doc_no -- 인사이동신청서
+		LEFT OUTER JOIN emp_info e ON d.emp_no = e.emp_no -- 사원 정보
+		LEFT OUTER JOIN document_file f ON d.doc_no = f.doc_no -- 첨부파일 
+		LEFT OUTER JOIN document_signer ds1 ON d.doc_no = ds1.doc_no AND ds1.emp_signer_level = 1 -- 기안문서의 결재자 1
+		LEFT OUTER JOIN emp_info signer1_info ON ds1.emp_signer_no = signer1_info.emp_no -- 결재자 1의 사원정보 
+		LEFT OUTER JOIN document_signer ds2 ON d.doc_no = ds2.doc_no AND ds2.emp_signer_level = 2 -- 기안문서의 결재자 2
+		LEFT OUTER JOIN emp_info signer2_info ON ds2.emp_signer_no = signer2_info.emp_no -- 결재자 2의 사원정보
+		LEFT OUTER JOIN emp_info reference_info ON d.reference = reference_info.emp_no -- 참조자 사원정보 
+		LEFT OUTER JOIN common_code dc ON e.dept = dc.code -- 기안부서 code_name
+		LEFT OUTER JOIN common_code pc ON e.position = pc.code -- 기안자 직급 code_name
+		LEFT OUTER JOIN common_code rec ON d.receiver_team = rec.code -- 수신팀 code_name
+		LEFT OUTER JOIN common_code signer1_pc ON signer1_info.position = signer1_pc.code -- 결재자1 code_name
+		LEFT OUTER JOIN common_code signer2_pc ON signer2_info.position = signer2_pc.code -- 결재자2 code_name
+		LEFT OUTER JOIN common_code repo ON dr.doc_reshuffle_position = repo.code -- 변경 후 직급 code_name
+		LEFT OUTER JOIN common_code rede ON dr.doc_reshuffle_dept = rede.code -- 변경 후 부서 code_name
+		WHERE d.doc_no = #{docNo}
+	</select>
+	
+</mapper>

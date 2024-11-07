@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 회의실 캘린더 예약 mapper -->
+<mapper namespace="com.goodee.JoinTree.mapper.MeetRoomReservMapper">
+
+	<!-- 회의실 리스트 (MeetingRoom VO) 전체조회로 + 이미지 join -->
+	<select id="empselectMeetRoomAll" parameterType="java.util.Map" resultType="com.goodee.JoinTree.vo.MeetingRoom">
+		SELECT
+			m.room_no roomNo,
+			m.equip_category equipCategory,
+			m.room_name roomName,
+			m.room_Capacity roomCapacity,
+			m.room_status roomStatus,
+			s.room_save_filename roomSaveFilename,
+			m.createdate,
+			m.updatedate,
+			m.create_id createId,
+			m.update_id updateId
+		FROM meeting_room m
+		LEFT JOIN meet_room_file s ON m.room_no = s.room_no
+		WHERE m.equip_category = 'E0101';
+	</select>
+	
+	<!-- 사원view 예약 일자 검색 -->
+	<select id="getEmpSearchReservation" parameterType="java.util.Map" resultType="com.goodee.JoinTree.vo.Reservation">
+		SELECT
+			r.rev_no revNo,
+			r.emp_no empNo,
+			r.equip_no equipNo,
+			r.equip_category equipCategory,
+			r.rev_start_time revStartTime,
+			r.rev_end_time revEndTime,
+			r.rev_status revStatus,
+			r.rev_reason revReason,
+			r.createdate,
+			r.updatedate,
+			r.create_id createId,
+			r.update_id updateId,
+			m.room_name roomName
+		FROM reservation r
+		INNER JOIN meeting_room m ON r.equip_no = m.room_no AND r.equip_category = m.equip_category
+		WHERE r.emp_no = #{empNo} AND r.equip_category = 'E0101'
+	    <choose>
+	        <when test="revStartTime != null and revEndTime != null and revStartTime != '' and revEndTime != ''">
+	            AND DATE(r.rev_start_time) &gt;= #{revStartTime} AND DATE(r.rev_start_time) &lt;= #{revEndTime}
+	        </when>
+	        <when test="revStartTime != null and revStartTime != ''">
+	            AND DATE(r.rev_start_time) &gt;= #{revStartTime}
+	        </when>
+	        <otherwise>
+	            AND 1 = 1
+	        </otherwise>
+	    </choose>
+	    ORDER BY r.createdate DESC;
+	</select>
+	
+	<!-- 회의실 별 캘린더(예약현황 조회) 예약완료인 건들만 -->
+	<select id="selectMeetCalList" resultType="com.goodee.JoinTree.vo.Reservation">
+		SELECT
+			r.rev_no revNo,
+			r.emp_no empNo,
+			r.equip_no equipNo,
+			r.equip_category equipCategory,
+			r.rev_start_time revStartTime,
+			r.rev_end_time revEndTime,
+			r.rev_status revStatus,
+			r.rev_reason revReason,
+			r.createdate,
+			r.updatedate,
+			r.create_id createId,
+			r.update_id updateId,
+			m.room_no roomNo
+		FROM reservation r
+		INNER JOIN meeting_room m ON r.equip_no = m.room_no AND r.equip_category = m.equip_category
+		WHERE m.room_no = #{roomNo} AND r.rev_status = 'A0301'
+	</select>
+	
+	<!-- 회의실 예약 하기 -->
+	<insert id="insertMeetCal" parameterType="com.goodee.JoinTree.vo.Reservation">
+	 	<selectKey order="AFTER" keyProperty="revNo" resultType="int">
+	        SELECT last_insert_id()
+	    </selectKey>
+		INSERT INTO reservation(
+			emp_no,
+			equip_no,
+			equip_category,
+			rev_start_time,
+			rev_end_time,
+			rev_status,
+			rev_reason,
+			createdate,
+			updatedate,
+			create_id,
+			update_id
+		)
+		VALUES(
+			#{empNo},
+			#{equipNo},
+			#{equipCategory},
+			#{revStartTime},
+			#{revEndTime},
+			#{revStatus},
+			#{revReason},
+			NOW(),
+	        NOW(),
+			#{empNo},
+			#{empNo}
+		)	
+	</insert>
+	
+	<!-- 사원별 예약 조회 empNo-->
+	<select id="selectMeetReserved" parameterType="java.util.Map" resultType="com.goodee.JoinTree.vo.Reservation">
+		SELECT
+			r.rev_no revNo,
+			r.emp_no empNo,
+			r.equip_no equipNo,
+			r.equip_category equipCategory,
+			r.rev_start_time revStartTime,
+			r.rev_end_time revEndTime,
+			r.rev_status revStatus,
+			r.rev_reason revReason,
+			r.createdate,
+			r.updatedate,
+			r.create_id createId,
+			r.update_id updateId,
+			m.room_name roomName
+		FROM reservation r
+		INNER JOIN meeting_room m ON r.equip_no = m.room_no AND r.equip_category = m.equip_category
+		WHERE r.emp_no = #{empNo} AND r.equip_category = #{equipCategory}
+		ORDER BY createdate DESC;
+	</select>
+	
+	<!-- 경영지원팀의 모든 예약 조회 / 관리자가 예약 취소 시켰을 시 update id >> 관리자 id로 보이게-->
+	<select id="selectAllMeetReserved" parameterType="java.util.Map" resultType="com.goodee.JoinTree.vo.Reservation">
+		SELECT
+		    r.rev_no revNo,
+		    r.emp_no empNo,
+		    e.emp_name empName,
+		    r.equip_no equipNo,
+		    r.equip_category equipCategory,
+		    r.rev_start_time revStartTime,
+		    r.rev_end_time revEndTime,
+		    r.rev_status revStatus,
+		    r.rev_reason revReason,
+		    r.createdate,
+		    r.updatedate,
+		    r.create_id createId,
+		    r.update_id updateId,
+		    u.emp_name updateName,
+		    m.room_name roomName
+		FROM reservation r
+		INNER JOIN meeting_room m ON r.equip_no = m.room_no AND r.equip_category = m.equip_category
+		INNER JOIN emp_info e ON r.emp_no = e.emp_no <!-- 사원 이름 -->
+		LEFT JOIN emp_info u ON r.update_id = u.emp_no <!-- 업데이트를 수행한 직원의 이름 -->
+		WHERE r.equip_category = #{equipCategory}
+		ORDER BY createdate DESC;
+	</select>
+	
+	<!-- 예약 검색 조건별 cnt -->
+	<select id="searchCnt" parameterType="java.util.Map" resultType="int">
+	    SELECT COUNT(*) FROM reservation r
+		    INNER JOIN meeting_room m ON r.equip_no = m.room_no AND r.equip_category = m.equip_category
+		    INNER JOIN emp_info e ON r.emp_no = e.emp_no
+		    LEFT JOIN emp_info u ON r.update_id = u.emp_no
+		 <where>
+	    	<if test="empName != null and empName != ''">
+	    		AND e.emp_name = #{empName}
+	    	</if>
+	        <if test="revStatus != null and revStatus != ''">
+	            AND r.rev_status = #{revStatus}
+	        </if>
+	        <if test="revStartTime != null and revEndTime != null and revStartTime != '' and revEndTime != ''">
+	            AND DATE(r.rev_start_time) &gt;= #{revStartTime} AND DATE(r.rev_end_time) &lt;= #{revEndTime}
+	        </if>
+	        <if test="revStartTime != null and revStartTime != ''">
+	            AND DATE(r.rev_start_time) &gt;= #{revStartTime}
+	        </if>
+	        <if test="(revStatus == null and revStatus == '') and (revStartTime == null and revStartTime == '') and (revEndTime == null and revEndTime == '') and (empName == null and empName == '')">
+	            AND 1 = 1
+	        </if>
+	    </where>
+	    ORDER BY r.createdate DESC;
+	</select>
+	
+	
+	<!-- 회의실 예약취소(상태만 변경) : 코드 A0302(예약취소) A0303(사용완료) ::: empNo로 받지말고 udpateId라고 받기-->
+	<update id="updateMeetCal" parameterType="com.goodee.JoinTree.vo.Reservation">
+		UPDATE reservation
+		SET rev_status = #{revStatus},
+		updatedate = NOW(),
+		update_id = #{updateId}
+		WHERE rev_no = #{revNo};
+	</update>
+	
+	<!-- 관리자 검색 기능 -->
+	<select id="getSearchReservation" parameterType="java.util.Map" resultType="com.goodee.JoinTree.vo.Reservation">
+	    SELECT
+	        r.rev_no revNo,
+	        r.emp_no empNo,
+	        e.emp_name empName,
+	        r.equip_no equipNo,
+	        r.equip_category equipCategory,
+	        r.rev_start_time revStartTime,
+	        r.rev_end_time revEndTime,
+	        r.rev_status revStatus,
+	        r.rev_reason revReason,
+	        r.createdate,
+	        r.updatedate,
+	        r.create_id createId,
+	        r.update_id updateId,
+	        u.emp_name updateName,
+	        m.room_name roomName
+	    FROM reservation r
+	    INNER JOIN meeting_room m ON r.equip_no = m.room_no AND r.equip_category = m.equip_category
+	    INNER JOIN emp_info e ON r.emp_no = e.emp_no <!-- 사원 이름 -->
+	    LEFT JOIN emp_info u ON r.update_id = u.emp_no <!-- 업데이트를 수행한 직원의 이름 -->
+	    <where>
+	    	<if test="empName != null and empName != ''">
+	    		AND e.emp_name = #{empName}
+	    	</if>
+	        <if test="revStatus != null and revStatus != ''">
+	            AND r.rev_status = #{revStatus}
+	        </if>
+	        <if test="revStartTime != null and revEndTime != null and revStartTime != '' and revEndTime != ''">
+	            AND DATE(r.rev_start_time) &gt;= #{revStartTime} AND DATE(r.rev_end_time) &lt;= #{revEndTime}
+	        </if>
+	        <if test="revStartTime != null and revStartTime != ''">
+	            AND DATE(r.rev_start_time) &gt;= #{revStartTime}
+	        </if>
+	        <if test="(revStatus == null and revStatus == '') and (revStartTime == null and revStartTime == '') and (revEndTime == null and revEndTime == '') and (empName == null and empName == '')">
+	            AND 1 = 1
+	        </if>
+	    </where>
+	    ORDER BY r.createdate DESC;
+	</select>
+</mapper>

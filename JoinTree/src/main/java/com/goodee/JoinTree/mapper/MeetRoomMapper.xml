@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goodee.JoinTree.mapper.MeetRoomMapper">
+
+	<!-- 회의실 이름 중복검사 -->
+	<select id="selectRoomName" resultType="int">
+    	SELECT
+    	COUNT(*)
+    	FROM meeting_room
+    	<where>
+    	room_name = #{roomName}
+    	</where>
+	</select>
+	
+	<!-- 경영지원 회의실 목록 조회 (페이징때는 전체행으로 사용)-->
+	<select id="selectMeetRoomAll" parameterType="java.util.Map" resultType="com.goodee.JoinTree.vo.MeetingRoom">
+		SELECT
+			room_no roomNo,
+			equip_category equipCategory,
+			room_name roomName,
+			room_capacity roomCapacity,
+			room_status roomStatus,
+			createdate,
+			updatedate,
+			create_id createId,
+			update_id updateId
+		FROM meeting_room
+		WHERE equip_category = 'E0101'
+		ORDER BY createdate DESC;
+	</select>
+	
+	<!-- 경영지원 회의실 추가 / 공통코드 사용-->
+	<insert id="insertMeetRoom" parameterType="com.goodee.JoinTree.vo.MeetingRoom" >
+	    <selectKey order="AFTER" keyProperty="roomNo" resultType="int">
+	        SELECT last_insert_id()
+	    </selectKey>
+	    INSERT INTO meeting_room(
+	        equip_category,
+	        emp_no,
+	        room_name,
+	        room_capacity,
+	        room_status,
+	        createdate,
+	        updatedate,
+	        create_id,
+	        update_id
+	    )
+	    VALUES(
+	        #{equipCategory},
+	        #{empNo},
+	        #{roomName},
+	        #{roomCapacity},
+	        #{roomStatus},
+	        NOW(),
+	        NOW(),
+	        #{empNo},
+	        #{empNo}
+	    )
+	</insert>
+	
+	<!-- 회의실 수정 -->
+	<update id="updateMeetRoom" parameterType="com.goodee.JoinTree.vo.MeetingRoom">
+	    UPDATE meeting_room
+	    SET room_name = #{roomName},
+	        room_capacity = #{roomCapacity},
+	        room_status = #{roomStatus},
+	        updatedate = NOW(),
+	        update_id = #{empNo}
+	    WHERE room_no = #{roomNo}
+	</update>
+	
+	<!-- 비품 상세 -->
+	<select id="selectMeetRoomOne" parameterType="com.goodee.JoinTree.vo.MeetingRoom" resultType="com.goodee.JoinTree.vo.MeetingRoom">
+		SELECT
+			room_no roomNo,
+			equip_category equipCategory,
+			emp_no empNo,
+			room_name roomName,
+			room_capacity roomCapacity,
+			room_status roomStatus,
+			createdate,
+			updatedate,
+			create_id createId,
+			update_id updateId
+		FROM meeting_room
+		WHERE room_no = #{roomNo}
+	</select>
+	
+	<!-- 삭제 AND member_id = #{memberId}-->
+	<delete id="deleteMeetRoom" parameterType="com.goodee.JoinTree.vo.MeetingRoom">
+		DELETE FROM meeting_room
+		WHERE room_no = #{roomNo}
+	</delete>
+	
+	<!-- 회의실 관리 검색 기능 (회의실이름) select 할 때 * 쓰지 않기 -->
+	<select id="searchMeetRoom" parameterType="java.util.Map" resultType="com.goodee.JoinTree.vo.MeetingRoom">
+	    SELECT
+			room_no roomNo,
+			equip_category equipCategory,
+			emp_no empNo,
+			room_name roomName,
+			room_capacity roomCapacity,
+			room_status roomStatus,
+			createdate,
+			updatedate,
+			create_id createId,
+			update_id updateId
+		FROM meeting_room
+      	<where>
+	    	<if test="roomName != null and roomName != ''">
+	    		AND room_name LIKE CONCAT('%', #{roomName}, '%')
+	    	</if>
+	    	<if test="roomName == null and roomName == ''">
+	            AND 1 = 1
+	        </if>
+	    </where>
+		ORDER BY createdate DESC;
+	</select>
+	
+	<!-- 검색조건 행의수 -->
+	<select id="searchMeetListCnt" parameterType="java.util.Map" resultType="int">
+		SELECT COUNT(*)
+		FROM meeting_room
+		<where>
+	    	<if test="roomName != null and roomName != ''">
+	    		AND room_name LIKE CONCAT('%', #{roomName}, '%')
+	    	</if>
+	    	<if test="roomName == null and roomName == ''">
+	            AND 1 = 1
+	        </if>
+	    </where>
+		ORDER BY createdate DESC;
+	</select>
+	
+	
+	
+	
+	<!-- 아래부터 이미지 관련 -->
+	<!-- 회의실 이미지 추가 -->
+    <insert id="insertMeetRoomFile" parameterType="com.goodee.JoinTree.vo.MeetRoomFile">
+        INSERT INTO meet_room_file (
+            room_no,
+            room_origin_filename,
+            room_save_filename,
+            room_filetype,
+            room_filesize,
+            createdate,
+            updatedate,
+            create_id,
+            update_id
+        )
+        VALUES (
+            #{roomNo},
+            #{roomOriginFilename},
+            #{roomSaveFilename},
+            #{roomFiletype},
+            #{roomFilesize},
+            NOW(),
+            NOW(),
+            #{createId},
+            #{updateId}
+        )
+    </insert>
+
+    <!-- 회의실 이미지 조회 메서드 -->
+    <select id="selectMeetRoomFile" parameterType="int" resultType="com.goodee.JoinTree.vo.MeetRoomFile">
+        SELECT
+            room_file_no roomFileNo,
+            room_no roomNo,
+            room_origin_filename roomOriginFilename,
+            room_save_filename roomSaveFilename,
+            room_filetype roomFiletype,
+            room_filesize roomFilesize,
+            createdate,
+            updatedate,
+            create_id createId,
+            update_id updateId
+        FROM meet_room_file
+        WHERE room_no = #{roomNo}
+    </select>
+
+    <!-- 회의실 이미지 삭제 메서드 -->
+    <delete id="removeMeetRoomFile" parameterType="int">
+        DELETE FROM meet_room_file
+        WHERE room_no = #{roomNo}
+    </delete>
+    
+    <!-- 첨부파일 개수 cnt -->
+    <select id="selectMeetRoomFileCnt" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM meet_room_file WHERE room_no = #{roomNo}
+    </select>
+</mapper>

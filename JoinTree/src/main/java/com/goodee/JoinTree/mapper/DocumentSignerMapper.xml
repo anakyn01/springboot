@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goodee.JoinTree.mapper.DocumentSignerMapper">
+	<insert id="addDocSigner" parameterType="com.goodee.JoinTree.vo.DocumentSigner">
+		INSERT INTO document_signer(
+			doc_no,
+			emp_signer_no,
+			emp_signer_level,
+			doc_status,
+			createdate,
+			updatedate,
+			create_id,
+			update_id
+		)VALUES(
+			#{docNo},
+			#{empSignerNo},
+			#{empSignerLevel},
+			'A0201',
+			now(),
+			now(),
+			#{createId},
+			#{updateId}
+		)
+	</insert>
+	
+	<select id="signerCnt">
+		SELECT COUNT(*) 
+		FROM document_signer
+		WHERE doc_no = #{docNo}
+	</select>
+	
+	<select id="signerLevel" parameterType="com.goodee.JoinTree.vo.DocumentSigner">
+		SELECT emp_signer_level empSignerLevel
+		FROM document_signer
+		WHERE doc_no = #{docNo} AND emp_signer_no = #{empSignerNo} 
+	</select>
+
+	<update id="modifySignerStatus" parameterType="com.goodee.JoinTree.vo.DocumentSigner">
+		UPDATE document_signer
+		SET doc_status = #{docStatus}, 
+			updatedate = NOW(), 
+			update_id = #{empSignerNo}
+		WHERE doc_no = #{docNo} AND emp_signer_level = #{empSignerLevel}
+	</update>
+</mapper>
